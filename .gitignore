@@ -7,3 +7,4 @@
 *.exe
 *.tar.gz
 /vendor
+.idea/

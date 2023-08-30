@@ -470,10 +470,11 @@ func (dms *DiskMetricStore) doCleanUpInReguarInterval(timeToLive time.Duration) 
 }
 
 func (dms *DiskMetricStore) cleanupStaleValues(timeToLive time.Duration) {
-	dms.lock.RLock()
-	defer dms.lock.RUnlock()
+	dms.lock.Lock()
+	defer dms.lock.Unlock()
 
 	cleanupCycleStartTime := time.Now()
+	fmt.Printf("Cleanup started at %v\n", cleanupCycleStartTime)
 
 	for metricID, group := range dms.metricGroups {
 		for metricName, tmf := range group.Metrics {
@@ -485,6 +486,8 @@ func (dms *DiskMetricStore) cleanupStaleValues(timeToLive time.Duration) {
 			delete(dms.metricGroups, metricID)
 		}
 	}
+	cleanupCycleEndTime := time.Now()
+	fmt.Printf("Cleanup finished at %v, elapsed %v\n", cleanupCycleEndTime, cleanupCycleEndTime.Sub(cleanupCycleStartTime).Seconds())
 }
 
 // groupingKeyFor creates a grouping key from the provided map of grouping
